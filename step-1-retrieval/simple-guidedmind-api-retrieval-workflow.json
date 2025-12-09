@@ -1,0 +1,110 @@
+{
+  "name": "Simple GuidedMind RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -400,
+        -60
+      ],
+      "id": "53baff3b-6e80-406b-bbb9-0a501f76694c",
+      "name": "When chat message received",
+      "webhookId": "7fe9286d-4c7f-4eb7-9f37-d5e4ec0d869c"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.guidedmind.ai/mcp/rag/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "rk_00000036_fbVfaMBWB0cpcvJLMAwrLN5Id_Puz1-zbYe9svbkAHM"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $json.chatInput }}\",\n  \"filters\": {},\n  \"threshold\": 0.4,\n    \"k\": 1,\n  \"options\": {\n    \"includeMetadata\": true\n\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -180,
+        -60
+      ],
+      "id": "3130de0d-56f5-40df-8293-ad17b62a1c89",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "55bf3950-fbbc-4d81-b0ec-cac92f256ff8",
+              "name": "result",
+              "value": "={{ $json.results[0].chunk_content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        40,
+        -60
+      ],
+      "id": "42c87374-e418-4453-8ffa-7d0c8cc13661",
+      "name": "Edit Fields",
+      "alwaysOutputData": false
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fdfe60da-fd79-41d1-9e63-9467d65c198b",
+  "meta": {
+    "instanceId": "2c97592adcc552fa95bb28c95a973e70a815660d2ab3191deb1774b3562b900d"
+  },
+  "id": "dh0UZI5d5yj2cnvZ",
+  "tags": []
+}
